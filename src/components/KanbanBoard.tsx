@@ -16,8 +16,9 @@ import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 
-function KanbanBoard() {
+export default function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
+
   const columnsId = useMemo(
     () => columns.map((column) => column.id),
     [columns]
@@ -26,19 +27,19 @@ function KanbanBoard() {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
+
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 3,
+        distance: 10,
       },
     })
   );
 
-  const generateId = () => {
-    return Math.floor(Math.random() * 10001);
-  };
+  // create a unique id for our array between 0 to 10000
+  const generateId = () => Math.floor(Math.random() * 10001);
 
   const createNewColumn = () => {
     const columnToAdd: Column = {
@@ -48,8 +49,8 @@ function KanbanBoard() {
     setColumns([...columns, columnToAdd]);
   };
   const deleteColumn = (id: Id) => {
-    const filteredColumn = columns.filter((column) => column.id !== id);
-    setColumns(filteredColumn);
+    const filteredColumns = columns.filter((column) => column.id !== id);
+    setColumns(filteredColumns);
 
     const newTasks = tasks.filter((task) => task.columnId !== id);
     setTasks(newTasks);
@@ -62,18 +63,6 @@ function KanbanBoard() {
     });
 
     setColumns(newColumns);
-  };
-
-  const onDragStart = (event: DragStartEvent) => {
-    if (event.active.data.current?.type === "Column") {
-      setActiveColumn(event.active.data.current.column);
-      return;
-    }
-
-    if (event.active.data.current?.type === "Task") {
-      setActiveTask(event.active.data.current.column);
-      return;
-    }
   };
 
   const createTask = (columnId: Id) => {
@@ -98,12 +87,25 @@ function KanbanBoard() {
     setTasks(newTasks);
   };
 
+  const onDragStart = (event: DragStartEvent) => {
+    if (event.active.data.current?.type === "Column") {
+      setActiveColumn(event.active.data.current.column);
+      return;
+    }
+
+    if (event.active.data.current?.type === "Task") {
+      setActiveTask(event.active.data.current.column);
+      return;
+    }
+  };
+
   const onDragEnd = (event: DragEndEvent) => {
     setActiveColumn(null);
     setActiveTask(null);
 
     const { active, over } = event;
     if (!over) return;
+
     const activeColumnId = active.id;
     const overColumnId = over.id;
 
@@ -133,6 +135,7 @@ function KanbanBoard() {
 
     if (!isActiveTask) return;
 
+    // Dropping a task on the same column
     if (isActiveTask && isOverTask) {
       setTasks((tasks) => {
         const activeTaskIndex = tasks.findIndex(
@@ -148,6 +151,7 @@ function KanbanBoard() {
 
     const isOverColumn = over.data.current?.type === "Column";
 
+    // Dropping a task on a new column
     if (isActiveTask && isOverColumn) {
       setTasks((tasks) => {
         const activeTaskIndex = tasks.findIndex(
@@ -222,5 +226,3 @@ function KanbanBoard() {
     </div>
   );
 }
-
-export default KanbanBoard;
