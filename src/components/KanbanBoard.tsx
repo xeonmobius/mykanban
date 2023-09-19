@@ -15,6 +15,7 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
+import GithubIcon from "../icons/GithubIcon";
 
 export default function KanbanBoard() {
   const [columns, setColumns] = useState<Column[]>([]);
@@ -223,6 +224,11 @@ export default function KanbanBoard() {
           document.body
         )}
       </DndContext>
+      <div className="absolute top-0 start-0">
+        <a href="https://github.com/xeonmobius/mykanban" target="_blank">
+          <GithubIcon />
+        </a>
+      </div>
     </div>
   );
 }
