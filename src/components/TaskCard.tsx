@@ -3,14 +3,17 @@ import MinusIcon from "../icons/MinusIcon";
 import { Id, Task } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useBearStore } from "../store";
 
 interface Props {
   task: Task;
-  deleteTask: (id: Id) => void;
-  updateTask: (id: Id, content: string) => void;
 }
 
-export default function TaskCard({ task, deleteTask, updateTask }: Props) {
+export default function TaskCard({ task }: Props) {
+
+  const deleteTask = useBearStore((state) => state.deleteTask);
+  const updateTask = useBearStore((state) => state.updateTask);
+
   const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
 

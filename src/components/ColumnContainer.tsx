@@ -1,34 +1,25 @@
 import { useMemo, useState } from "react";
 import MinusIcon from "../icons/MinusIcon";
-import { Column, Id, Task } from "../types";
+import { Column } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import PlusIcon from "../icons/PlusIcon";
 import TaskCard from "./TaskCard";
 import { SortableContext } from "@dnd-kit/sortable";
+import { useBearStore } from "../store";
 
 interface Props {
   column: Column;
-  deleteColumn: (id: Id) => void;
-  updateColumn: (id: Id, title: string) => void;
-
-  tasks: Task[];
-  createTask: (columnId: Id) => void;
-  deleteTask: (id: Id) => void;
-  updateTask: (id: Id, content: string) => void;
 }
 
 export default function ColumnContainer(props: Props) {
-  // Destructure the props
-  const {
-    column,
-    deleteColumn,
-    updateColumn,
-    createTask,
-    tasks,
-    deleteTask,
-    updateTask,
-  } = props;
+  const deleteColumn = useBearStore((state) => state.deleteColumn);
+  const updateColumn = useBearStore((state) => state.updateColumn);
+  const tasks = useBearStore((state) =>
+    state.tasks.filter((task) => task.columnId === props.column.id)
+  );
+  const addTask = useBearStore((state) => state.addTask);
+  const { column } = props;
 
   const [editMode, setEditMode] = useState<boolean>(false);
 
@@ -122,19 +113,14 @@ export default function ColumnContainer(props: Props) {
       <div className="flex flex-grow flex-col gap-4 p-2 over-flow-x-hidden overflow-y-auto">
         <SortableContext items={tasksId}>
           {tasks.map((task) => (
-            <TaskCard
-              updateTask={updateTask}
-              deleteTask={deleteTask}
-              key={task.id}
-              task={task}
-            />
+            <TaskCard key={task.id} task={task} />
           ))}
         </SortableContext>
       </div>
       <button
         className="flex gap-2 items-center border-columnBackgroundColor border-2 rounded-md p-4 border-x-columnBackgroundColor hover:bg-mainBackgroundColor hover:text-rose-500 active:bg-black"
         onClick={() => {
-          createTask(column.id);
+          addTask(column.id);
         }}
       >
         <PlusIcon />
