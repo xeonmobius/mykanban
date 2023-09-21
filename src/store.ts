@@ -57,7 +57,7 @@ export const useBearStore = create<BearState>()(
             tasks: (state.tasks = [...state.tasks, {
                 id: generateId(),
                 columnId: columnId,
-                content: `Task ${state.tasks.length + 1}`,
+                content: `Task ${state.tasks.length}`,
               }]),
           })),
         updateTask: (id: Id, content: string) =>
