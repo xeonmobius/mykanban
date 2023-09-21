@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MinusIcon from "../icons/MinusIcon";
+import ClockIcon from "../icons/ClockIcon";
 import { Task } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -10,8 +11,10 @@ interface Props {
 }
 
 export default function TaskCard({ task }: Props) {
-  const deleteTask = useBearStore((state) => state.deleteTask);
-  const updateTask = useBearStore((state) => state.updateTask);
+  const [updateTask, deleteTask] = useBearStore((state) => [
+    state.updateTask,
+    state.deleteTask,
+  ])
 
   const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
@@ -98,14 +101,24 @@ export default function TaskCard({ task }: Props) {
         {task.content}
       </p>
       {mouseIsOver && (
-        <button
-          className="stroke-white absolute right-4 top-1/2-translate-y-1/2 bg-columnBackgroundColor p-2 rounded opacity-60 hover:opacity-100"
+        <div className="stroke-white absolute right-4 top-1/2-translate-y-1/2 p-2 bg-columnBackgroundColor rounded flex flex-row">
+          <button className="pr-2 opacity-60 hover:opacity-100"
           onClick={() => {
-            deleteTask(task.id);
+            console.log("start timer!");
+            // need to build out more
           }}
-        >
-          <MinusIcon />
-        </button>
+          >
+            <ClockIcon />
+          </button>
+          <button
+          className="pl-2 opacity-60 hover:opacity-100"
+            onClick={() => {
+              deleteTask(task.id);
+            }}
+          >
+            <MinusIcon />
+          </button>
+        </div>
       )}
     </div>
   );

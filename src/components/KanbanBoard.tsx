@@ -17,22 +17,28 @@ import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 import GithubIcon from "../icons/GithubIcon";
 import { useBearStore } from "../store";
+import TimerCard from "./TimerCard";
 
 export default function KanbanBoard() {
-  const columns = useBearStore((state) => state.columns);
-  const setColumns = useBearStore((state) => state.setColumns);
-  const addColumn = useBearStore((state) => state.addColumn);
+
+  const [columns, setColumns, addColumn, tasks, setTasks] = useBearStore(
+    (state) => [
+      state.columns,
+      state.setColumns,
+      state.addColumn,
+      state.tasks,
+      state.setTasks,
+    ]
+  );
 
   const columnsId = useMemo(
     () => columns.map((column) => column.id),
     [columns]
   );
 
-  const tasks = useBearStore((state) => state.tasks);
-  const setTasks = useBearStore((state) => state.setTasks);
+  const showTimer = false;
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
-
   const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const sensors = useSensors(
@@ -122,6 +128,7 @@ export default function KanbanBoard() {
       setTasks(moveTaskColumn(tasks));
     }
   };
+
   return (
     <div className="m-auto flex min-h-screen w-full items-center overflow-x-auto overflow-y-hidden px-[40px]">
       <DndContext
@@ -159,6 +166,7 @@ export default function KanbanBoard() {
           <GithubIcon />
         </a>
       </div>
+      {showTimer && <TimerCard />}
     </div>
   );
 }

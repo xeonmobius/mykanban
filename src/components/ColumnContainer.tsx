@@ -13,18 +13,20 @@ interface Props {
 }
 
 export default function ColumnContainer(props: Props) {
-  const deleteColumn = useBearStore((state) => state.deleteColumn);
-  const updateColumn = useBearStore((state) => state.updateColumn);
+  const { column } = props;
 
-  const allTasks = useBearStore((state) => state.tasks);
-  const tasks = allTasks.filter((task) => task.columnId === props.column.id);
+  const [allTasks, addTask, deleteColumn, updateColumn] = useBearStore((state) => [
+    state.tasks,
+    state.addTask,
+    state.deleteColumn,
+    state.updateColumn,
+  ])
   
+  const tasks = allTasks.filter((task) => task.columnId === column.id);
+
   const tasksId = useMemo(() => {
     return tasks.map((task) => task.id);
   }, [tasks]);
-
-  const addTask = useBearStore((state) => state.addTask);
-  const { column } = props;
 
   const [editMode, setEditMode] = useState<boolean>(false);
 
