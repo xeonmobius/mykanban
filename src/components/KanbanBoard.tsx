@@ -130,7 +130,7 @@ export default function KanbanBoard() {
         sensors={sensors}
         onDragOver={onDragOver}
       >
-        <div className="m-auto flax gap-4">
+        <div className="m-auto flex gap-4">
           <div className="flex gap-4">
             <SortableContext items={columnsId}>
               {columns.map((column) => (
