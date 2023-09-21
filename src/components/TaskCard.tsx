@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MinusIcon from "../icons/MinusIcon";
-import { Id, Task } from "../types";
+import { Task } from "../types";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useBearStore } from "../store";
@@ -10,7 +10,6 @@ interface Props {
 }
 
 export default function TaskCard({ task }: Props) {
-
   const deleteTask = useBearStore((state) => state.deleteTask);
   const updateTask = useBearStore((state) => state.updateTask);
 

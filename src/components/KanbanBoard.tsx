@@ -17,8 +17,8 @@ import { createPortal } from "react-dom";
 import TaskCard from "./TaskCard";
 import GithubIcon from "../icons/GithubIcon";
 import { useBearStore } from "../store";
-export default function KanbanBoard() {
 
+export default function KanbanBoard() {
   const columns = useBearStore((state) => state.columns);
   const setColumns = useBearStore((state) => state.setColumns);
   const addColumn = useBearStore((state) => state.addColumn);
@@ -28,6 +28,7 @@ export default function KanbanBoard() {
     [columns]
   );
 
+  const tasks = useBearStore((state) => state.tasks);
   const setTasks = useBearStore((state) => state.setTasks);
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
@@ -65,8 +66,7 @@ export default function KanbanBoard() {
     const overColumnId = over.id;
 
     if (activeColumnId === overColumnId) return;
-
-    setColumns((columns) => {
+    const moveColumns = (columns: Column[]): Column[] => {
       const activeColumnIndex = columns.findIndex(
         (column) => column.id === activeColumnId
       );
@@ -74,7 +74,8 @@ export default function KanbanBoard() {
         (column) => column.id === overColumnId
       );
       return arrayMove(columns, activeColumnIndex, overColumnIndex);
-    });
+    };
+    setColumns(moveColumns(columns));
   };
 
   const onDragOver = (event: DragOverEvent) => {
@@ -92,7 +93,7 @@ export default function KanbanBoard() {
 
     // Dropping a task on the same column
     if (isActiveTask && isOverTask) {
-      setTasks((tasks) => {
+      const moveTask = (tasks: Task[]): Task[] => {
         const activeTaskIndex = tasks.findIndex(
           (task) => task.id === active.id
         );
@@ -101,14 +102,15 @@ export default function KanbanBoard() {
         tasks[activeTaskIndex].columnId = tasks[overTaskIndex].columnId;
 
         return arrayMove(tasks, activeTaskIndex, overTaskIndex);
-      });
+      };
+      setTasks(moveTask(tasks));
     }
 
     const isOverColumn = over.data.current?.type === "Column";
 
     // Dropping a task on a new column
     if (isActiveTask && isOverColumn) {
-      setTasks((tasks) => {
+      const moveTaskColumn = (tasks: Task[]): Task[] => {
         const activeTaskIndex = tasks.findIndex(
           (task) => task.id === active.id
         );
@@ -116,7 +118,8 @@ export default function KanbanBoard() {
         tasks[activeTaskIndex].columnId = overColumnId;
 
         return arrayMove(tasks, activeTaskIndex, activeTaskIndex);
-      });
+      };
+      setTasks(moveTaskColumn(tasks));
     }
   };
   return (
@@ -131,10 +134,7 @@ export default function KanbanBoard() {
           <div className="flex gap-4">
             <SortableContext items={columnsId}>
               {columns.map((column) => (
-                <ColumnContainer
-                  key={column.id}
-                  column={column}
-                />
+                <ColumnContainer key={column.id} column={column} />
               ))}
             </SortableContext>
           </div>
@@ -148,16 +148,8 @@ export default function KanbanBoard() {
         </div>
         {createPortal(
           <DragOverlay>
-            {activeColumn && (
-              <ColumnContainer
-                column={activeColumn}
-              />
-            )}
-            {activeTask && (
-              <TaskCard
-                task={activeTask}
-              />
-            )}
+            {activeColumn && <ColumnContainer column={activeColumn} />}
+            {activeTask && <TaskCard task={activeTask} />}
           </DragOverlay>,
           document.body
         )}

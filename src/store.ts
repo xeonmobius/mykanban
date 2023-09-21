@@ -70,7 +70,7 @@ export const useBearStore = create<BearState>()(
         deleteTask: (id: Id) =>
           set((state) => ({
             tasks: (state.tasks = state.tasks.filter(
-              (task) => task.columnId !== id
+              (task) => task.id !== id
             )),
           })),
       }),

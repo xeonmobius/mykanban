@@ -15,9 +15,14 @@ interface Props {
 export default function ColumnContainer(props: Props) {
   const deleteColumn = useBearStore((state) => state.deleteColumn);
   const updateColumn = useBearStore((state) => state.updateColumn);
-  const tasks = useBearStore((state) =>
-    state.tasks.filter((task) => task.columnId === props.column.id)
-  );
+
+  const allTasks = useBearStore((state) => state.tasks);
+  const tasks = allTasks.filter((task) => task.columnId === props.column.id);
+  
+  const tasksId = useMemo(() => {
+    return tasks.map((task) => task.id);
+  }, [tasks]);
+
   const addTask = useBearStore((state) => state.addTask);
   const { column } = props;
 
@@ -43,10 +48,6 @@ export default function ColumnContainer(props: Props) {
     transition,
     transform: CSS.Transform.toString(transform),
   };
-
-  const tasksId = useMemo(() => {
-    return tasks.map((task) => task.id);
-  }, [tasks]);
 
   if (isDragging) {
     return (
