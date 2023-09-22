@@ -16,6 +16,8 @@ export default function TaskCard({ task }: Props) {
     state.deleteTask,
   ])
 
+  const setShowTimer = useBearStore((state) => state.setShowTimer)
+
   const [mouseIsOver, setMouseIsOver] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
 
@@ -104,8 +106,7 @@ export default function TaskCard({ task }: Props) {
         <div className="stroke-white absolute right-4 top-1/2-translate-y-1/2 p-2 bg-columnBackgroundColor rounded flex flex-row">
           <button className="pr-2 opacity-60 hover:opacity-100"
           onClick={() => {
-            console.log("start timer!");
-            // need to build out more
+            setShowTimer(true)
           }}
           >
             <ClockIcon />

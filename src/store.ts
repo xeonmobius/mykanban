@@ -3,7 +3,6 @@ import { devtools, persist } from "zustand/middleware";
 import { Column, Id, Task } from "./types";
 
 interface BearState {
-  bears: number;
   columns: Column[];
   tasks: Task[];
   setColumns: (newColumns: Column[]) => void;
@@ -14,6 +13,8 @@ interface BearState {
   addTask: (columnId: Id) => void;
   updateTask: (id: Id, content: string) => void;
   deleteTask: (id: Id) => void;
+  showTimer: boolean,
+  setShowTimer: (bool: boolean) => void;
 }
 
 const generateId = () => Math.floor(Math.random() * 10001);
@@ -22,7 +23,6 @@ export const useBearStore = create<BearState>()(
   devtools(
     persist(
       (set) => ({
-        bears: 0,
         columns: [],
         tasks: [],
         setColumns: (newColumns: Column[]) =>
@@ -73,6 +73,10 @@ export const useBearStore = create<BearState>()(
               (task) => task.id !== id
             )),
           })),
+        showTimer: false,
+        setShowTimer: (bool: boolean) => {
+          set({ showTimer: bool})
+        }
       }),
       {
         name: "bear-storage",

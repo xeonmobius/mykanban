@@ -31,12 +31,12 @@ export default function KanbanBoard() {
     ]
   );
 
+  const [showTimer, setShowTimer] = useBearStore((state) => [state.showTimer, state.setShowTimer])
+
   const columnsId = useMemo(
     () => columns.map((column) => column.id),
     [columns]
   );
-
-  const showTimer = false;
 
   const [activeColumn, setActiveColumn] = useState<Column | null>(null);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
