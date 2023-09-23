@@ -7,11 +7,11 @@ import RestartIcon from "../icons/RestartIcon";
 import MinusIcon from "../icons/MinusIcon";
 
 const TIMER_QUEUE = [
-  { duration: 1 * 2, type: "focus" },
-  { duration: 1 * 2, type: "break" },
+  { duration: 25 * 60, type: "focus" },
+  { duration: 5 * 60, type: "break" },
 
-  { duration: 1 * 3, type: "focus" },
-  { duration: 1 * 3, type: "break" },
+  { duration: 25 * 60, type: "focus" },
+  { duration: 5 * 60, type: "break" },
 
   { duration: 25 * 60, type: "focus" },
   { duration: 5 * 60, type: "break" },
