@@ -31,7 +31,7 @@ export default function KanbanBoard() {
     ]
   );
 
-  const [showTimer, setShowTimer] = useBearStore((state) => [state.showTimer, state.setShowTimer])
+  const showTimer = useBearStore((state) => state.showTimer)
 
   const columnsId = useMemo(
     () => columns.map((column) => column.id),
