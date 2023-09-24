@@ -2,9 +2,8 @@ import { useRef, useState, useEffect } from "react";
 import { useBearStore } from "../store";
 import PlayIcon from "../icons/PlayIcon";
 import PauseIcon from "../icons/PauseIcon";
-import ForwardIcon from "../icons/FowardIcon";
-import RestartIcon from "../icons/RestartIcon";
 import MinusIcon from "../icons/MinusIcon";
+import audio from "../assets/alert.mp3";
 
 const TIMER_QUEUE = [
   { duration: 25 * 60, type: "focus" },
@@ -23,7 +22,7 @@ const TIMER_QUEUE = [
 export default function TimerCard() {
   const setShowTimer = useBearStore((state) => state.setShowTimer);
 
-  const current_queue = [...TIMER_QUEUE];
+  let current_queue = [...TIMER_QUEUE];
   const [countDownTimer, setCountDownTimer] = useState(
     current_queue[0]["duration"]
   );
@@ -37,19 +36,35 @@ export default function TimerCard() {
   let intervalRef = useRef<number | undefined>();
 
   const startTimer = () => {
+    // change the play button to pause button
     setPlay(true);
+
+    // clear the interval
     clearInterval(intervalRef.current);
+
+    // use shifted to track if queue was already shifted
     let shifted = false;
     intervalRef.current = setInterval(() => {
       setCountDownTimer((prev) => {
         if (prev === 0) {
+          // shift the queue if its not already 
           if (!shifted) {
-            current_queue.shift();
+            // check if queue is empty
+            if (current_queue.length > 0) {
+              current_queue.shift();  
+            }
+            // reset the queue to default and stop timer
+            else {
+              current_queue = [...TIMER_QUEUE];
+              clearInterval(intervalRef.current);
+            }
           }
           setLength(
             5 - current_queue.filter((item) => item.type === "focus").length
           );
           shifted = true;
+          // play the audio sound
+          new Audio(audio).play();
           return current_queue[0]["duration"];
         } else {
           shifted = false;
@@ -58,6 +73,7 @@ export default function TimerCard() {
       });
     }, 1000);
   };
+
 
   const pauseTimer = () => {
     setPlay(false);
@@ -68,6 +84,7 @@ export default function TimerCard() {
     startTimer();
   }, []);
 
+  // Convert the time to minutes and seconds
   const min = Math.floor(countDownTimer / 60)
     .toString()
     .padStart(2, "0");
@@ -81,7 +98,7 @@ export default function TimerCard() {
       <div className="bg-columnBackgroundColor w-[500px] h-[500px] max-h-[500px] rounded-md items-center justify-center flex flex-col">
         <h2 className="text-6xl font-bold text-center py-2">Pomodoro</h2>
         <h1 className="text-9xl font-bold text-center py-2">{`${min}:${seconds}`}</h1>
-        <p className="py-2">Focus!</p>
+        <p className="py-2">{current_queue[0]["type"].toUpperCase()}</p>
         <p className="py-2">{length} of 4 Sessions</p>
         <div>
           {/* Play/Pause Button */}
@@ -100,12 +117,6 @@ export default function TimerCard() {
               <PauseIcon />
             </button>
           )}
-          <button className="px-4 opacity-60 hover:opacity-100">
-            <ForwardIcon />
-          </button>
-          <button className="px-4 opacity-60 hover:opacity-100">
-            <RestartIcon />
-          </button>
           {/* Close Timer Button */}
           <button
             className="px-4 stroke-white opacity-60 hover:opacity-100"
